@@ -5,9 +5,10 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
 import { Product } from '@prisma/client';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -27,5 +28,13 @@ export class ProductsController {
   @Post()
   create(@Body() dto: CreateProductDto): Promise<Product> {
     return this.productsService.create(dto);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProductDto,
+  ): Promise<Product> {
+    return this.productsService.update(id, dto);
   }
 }
