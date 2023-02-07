@@ -10,6 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  password String 
+  role Role @default(USER)
+
+  name String?
+
+  cart Cart?
+}
+
 model Product {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -17,6 +31,7 @@ model Product {
 
   title String
   price Int
+
   description String?
   image String?
 
@@ -50,6 +65,9 @@ model Cart {
   updatedAt DateTime @updatedAt
 
   products ProductsOnCarts[]
+
+  userId Int @unique
+  user User @relation(fields: [userId], references: [id])
 }
 
 model ProductsOnCarts {
@@ -60,4 +78,9 @@ model ProductsOnCarts {
   cart Cart @relation(fields: [cartId], references: [id])
 
   @@id([productId, cartId])
+}
+
+enum Role {
+  USER
+  ADMIN
 }
