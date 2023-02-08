@@ -16,6 +16,9 @@ export class AuthService {
           name: dto.name,
           email: dto.email,
           password: hashedPassword,
+          cart: {
+            create: {},
+          },
         },
       });
       delete user.password;
