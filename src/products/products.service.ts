@@ -21,6 +21,9 @@ export class ProductsService {
       where: {
         id,
       },
+      include: {
+        categories: true,
+      },
     });
 
     if (!product) throw new NotFoundException('Product not found');
@@ -30,7 +33,20 @@ export class ProductsService {
 
   async create(dto: CreateProductDto): Promise<Product> {
     return this.prisma.product.create({
-      data: dto,
+      data: {
+        title: dto.title,
+        description: dto.description,
+        price: dto.price,
+        image: dto.image,
+        categories: dto.categories && {
+          createMany: {
+            data: dto.categories.map((id) => ({ categoryId: id })),
+          },
+        },
+      },
+      include: {
+        categories: true,
+      },
     });
   }
 
@@ -38,7 +54,21 @@ export class ProductsService {
     try {
       const product = await this.prisma.product.update({
         where: { id },
-        data: dto,
+        data: {
+          title: dto.title,
+          description: dto.description,
+          price: dto.price,
+          image: dto.image,
+          categories: dto.categories && {
+            deleteMany: {},
+            createMany: {
+              data: dto.categories.map((id) => ({ categoryId: id })),
+            },
+          },
+        },
+        include: {
+          categories: true,
+        },
       });
 
       return product;

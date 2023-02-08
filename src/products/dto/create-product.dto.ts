@@ -1,4 +1,10 @@
-import { IsString, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsArray,
+} from 'class-validator';
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
@@ -15,4 +21,8 @@ export class CreateProductDto {
   @IsString()
   @IsOptional()
   image?: string;
+
+  @IsArray()
+  @IsOptional()
+  categories?: number[];
 }
