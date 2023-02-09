@@ -18,6 +18,7 @@ async function bootstrap() {
     .setTitle('Store Api')
     .setVersion('1.0')
     .setDescription('API that simulate a store, developed to learn NestJS. ')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
