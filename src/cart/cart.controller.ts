@@ -1,5 +1,7 @@
 import { Controller, Get, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('cart')
 @Controller('cart')
 export class CartController {
   @Get()
