@@ -77,6 +77,8 @@ model ProductsOnCarts {
   cartId Int
   cart Cart @relation(fields: [cartId], references: [id])
 
+  quantity Int @default(1)
+
   @@id([productId, cartId])
 }
 
