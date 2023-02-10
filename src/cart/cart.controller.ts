@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { CartService } from './cart.service';
-import { AddProductDto } from './dto';
+import { AddDeleteProductFromCartDto } from './dto';
 
 @ApiTags('cart')
 @ApiBearerAuth()
@@ -17,12 +17,18 @@ export class CartController {
   }
 
   @Put()
-  addToCart(@GetUser('id') userId: number, @Body() dto: AddProductDto) {
+  addToCart(
+    @GetUser('id') userId: number,
+    @Body() dto: AddDeleteProductFromCartDto,
+  ) {
     return this.cartService.addToCart(userId, dto);
   }
 
   @Delete()
-  deleteFromCart(@GetUser('id') userId: number, @Body() dto: AddProductDto) {
+  deleteFromCart(
+    @GetUser('id') userId: number,
+    @Body() dto: AddDeleteProductFromCartDto,
+  ) {
     return this.cartService.deleteFromCart(userId, dto);
   }
 }

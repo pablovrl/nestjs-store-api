@@ -6,7 +6,7 @@ import {
 import { ProductsOnCarts } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductsService } from 'src/products/products.service';
-import { AddProductDto } from './dto';
+import { AddDeleteProductFromCartDto } from './dto';
 
 @Injectable()
 export class CartService {
@@ -26,7 +26,7 @@ export class CartService {
     });
   }
 
-  async addToCart(userId: number, dto: AddProductDto) {
+  async addToCart(userId: number, dto: AddDeleteProductFromCartDto) {
     const cart = await this.checkIfProductExistsInCart(userId, dto.productId);
 
     if (cart) {
@@ -77,7 +77,7 @@ export class CartService {
     });
   }
 
-  async deleteFromCart(userId: number, dto: AddProductDto) {
+  async deleteFromCart(userId: number, dto: AddDeleteProductFromCartDto) {
     const cart = await this.checkIfProductExistsInCart(userId, dto.productId);
 
     if (!cart) {

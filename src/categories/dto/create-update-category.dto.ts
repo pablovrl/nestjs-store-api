@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateCategoryDto {
+export class CreateUpdateCategoryDto {
   @IsString()
   @IsNotEmpty()
   name: string;
