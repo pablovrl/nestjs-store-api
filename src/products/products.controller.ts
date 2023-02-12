@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Product } from '@prisma/client';
-import { JwtGuard } from 'src/auth/guard';
+import { Roles } from 'src/auth/decorator';
+import { JwtGuard, RoleGuard } from 'src/auth/guard';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
@@ -29,14 +30,16 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @UseGuards(JwtGuard)
+  @Roles('ADMIN')
+  @UseGuards(JwtGuard, RoleGuard)
   @ApiBearerAuth()
   @Post()
   create(@Body() dto: CreateProductDto): Promise<Product> {
     return this.productsService.create(dto);
   }
 
-  @UseGuards(JwtGuard)
+  @Roles('ADMIN')
+  @UseGuards(JwtGuard, RoleGuard)
   @ApiBearerAuth()
   @Put(':id')
   update(
