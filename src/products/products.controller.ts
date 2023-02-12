@@ -6,9 +6,11 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Product } from '@prisma/client';
+import { JwtGuard } from 'src/auth/guard';
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
@@ -27,11 +29,15 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
   @Post()
   create(@Body() dto: CreateProductDto): Promise<Product> {
     return this.productsService.create(dto);
   }
 
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
