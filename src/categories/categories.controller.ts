@@ -18,12 +18,12 @@ export class CategoriesController {
 
   @Get()
   findAll() {
-    return this.categoriesService.findAll();
+    return this.categoriesService.getAll();
   }
 
   @Post()
   create(@Body() dto: CreateUpdateCategoryDto) {
-    return this.categoriesService.create(dto);
+    return this.categoriesService.insertOne(dto);
   }
 
   @Put(':id')
@@ -31,6 +31,6 @@ export class CategoriesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateUpdateCategoryDto,
   ) {
-    return this.categoriesService.update(id, dto);
+    return this.categoriesService.updateOne(id, dto);
   }
 }
