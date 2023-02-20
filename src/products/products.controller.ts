@@ -22,12 +22,12 @@ export class ProductsController {
 
   @Get()
   findAll() {
-    return this.productsService.findAll();
+    return this.productsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
-    return this.productsService.findOne(id);
+    return this.productsService.getOne(id);
   }
 
   @Roles('ADMIN')
@@ -35,7 +35,7 @@ export class ProductsController {
   @ApiBearerAuth()
   @Post()
   create(@Body() dto: CreateProductDto): Promise<Product> {
-    return this.productsService.create(dto);
+    return this.productsService.insertOne(dto);
   }
 
   @Roles('ADMIN')
@@ -46,6 +46,6 @@ export class ProductsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductDto,
   ): Promise<Product> {
-    return this.productsService.update(id, dto);
+    return this.productsService.updateOne(id, dto);
   }
 }

@@ -8,7 +8,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
+  async getAll() {
     return this.prisma.product.findMany({
       include: {
         categories: true,
@@ -16,7 +16,7 @@ export class ProductsService {
     });
   }
 
-  async findOne(id: number): Promise<Product> {
+  async getOne(id: number): Promise<Product> {
     const product = await this.prisma.product.findUnique({
       where: {
         id,
@@ -31,7 +31,7 @@ export class ProductsService {
     return product;
   }
 
-  async create(dto: CreateProductDto): Promise<Product> {
+  async insertOne(dto: CreateProductDto): Promise<Product> {
     return this.prisma.product.create({
       data: {
         title: dto.title,
@@ -50,7 +50,7 @@ export class ProductsService {
     });
   }
 
-  async update(id: number, dto: UpdateProductDto): Promise<Product> {
+  async updateOne(id: number, dto: UpdateProductDto): Promise<Product> {
     try {
       const product = await this.prisma.product.update({
         where: { id },
