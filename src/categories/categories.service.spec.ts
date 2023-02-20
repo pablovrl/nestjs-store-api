@@ -2,75 +2,97 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { Category } from '@prisma/client';
-import { CreateUpdateCategoryDto } from './dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('CategoriesService', () => {
   let categoriesService: CategoriesService;
-  let prismaService: PrismaService;
+  let prisma: PrismaService;
 
-  const categories: Category[] = [
+  const testCategoryName1 = 'category 1';
+
+  const categoriesArray: Category[] = [
     {
       id: 1,
-      name: 'Category 1',
+      name: testCategoryName1,
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       id: 2,
-      name: 'Category 2',
+      name: 'category 2',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
   ];
 
-  const mockPrisma = {
+  const oneCategory = categoriesArray[0];
+
+  const db = {
     category: {
-      findMany: () => Promise.resolve(categories),
-      create: (obj: { data: CreateUpdateCategoryDto }) =>
-        Promise.resolve(obj.data),
-      update: (obj: { where: { id: number }; data: CreateUpdateCategoryDto }) =>
-        Promise.resolve(obj.data),
+      findMany: jest.fn().mockResolvedValue(categoriesArray),
+      create: jest.fn().mockResolvedValue(oneCategory),
+      update: jest.fn().mockResolvedValue(oneCategory),
     },
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoriesService, PrismaService],
-    })
-      .overrideProvider(PrismaService)
-      .useValue(mockPrisma)
-      .compile();
+      providers: [
+        CategoriesService,
+        {
+          provide: PrismaService,
+          useValue: db,
+        },
+      ],
+    }).compile();
 
     categoriesService = module.get(CategoriesService);
-    prismaService = module.get(PrismaService);
+    prisma = module.get(PrismaService);
   });
 
   it('should be defined', () => {
     expect(categoriesService).toBeDefined();
   });
 
-  describe('findAll', () => {
-    it('should return all the categories', async () => {
-      const allCategories = await categoriesService.findAll();
-      expect(allCategories).toBe(categories);
+  describe('getAll', () => {
+    it('should return an array of categories', async () => {
+      const categories = categoriesService.getAll();
+
+      expect(prisma.category.findMany).toBeCalledTimes(1);
+      expect(categories).resolves.toEqual(categoriesArray);
     });
   });
 
-  describe('create', () => {
+  describe('insertOne', () => {
     it('should create a category and return it', () => {
-      const payload: CreateUpdateCategoryDto = { name: 'new category' };
-      const newCategory = categoriesService.create(payload);
+      const newCategory = categoriesService.insertOne({
+        name: testCategoryName1,
+      });
 
-      expect(newCategory).resolves.toBe(payload);
+      expect(prisma.category.create).toBeCalledTimes(1);
+      expect(newCategory).resolves.toEqual(oneCategory);
     });
   });
 
-  describe('update', () => {
-    it('should update a category and return it', () => {
-      const payload: CreateUpdateCategoryDto = { name: 'updated category' };
-      const updatedCategory = categoriesService.update(1, payload);
+  describe('updateOne', () => {
+    it('should call the update method', () => {
+      const updatedCategory = categoriesService.updateOne(1, {
+        name: testCategoryName1,
+      });
 
-      expect(updatedCategory).resolves.toBe(payload);
+      expect(prisma.category.update).toBeCalledTimes(1);
+      expect(updatedCategory).resolves.toBe(oneCategory);
+    });
+
+    it('should return an error when the category does not exist', () => {
+      const spy = jest.spyOn(prisma.category, 'update').mockRejectedValueOnce({
+        code: 'P2025',
+      });
+
+      expect(spy).toBeCalledTimes(1);
+      expect(categoriesService.updateOne(-1, { name: 'test' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
