@@ -57,7 +57,7 @@ export class CartService {
       });
     }
 
-    await this.productService.findOne(dto.productId);
+    await this.productService.getOne(dto.productId);
 
     return await this.prisma.cart.update({
       where: {
